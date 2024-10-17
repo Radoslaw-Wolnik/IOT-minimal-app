@@ -2,27 +2,19 @@
 import React from 'react';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
-import api from '../utils/api';
-
-interface TableData {
-  id: string;
-  content: Record<string, any>;
-  createdAt: string;
-}
-
-interface TableViewParams {
-  id: string;
-}
+import { getTableData } from '../utils/api';
+import { TableData, ApiError } from '../types/types';
 
 const TableViewPage: React.FC = () => {
-  const { id } = useParams<TableViewParams>();
-  const { data, isLoading, error } = useQuery<TableData[]>(['tableData', id], () =>
-    api.get(`/data/${id}`).then((res) => res.data.data)
+  const { id } = useParams<{ id: string }>();
+  const { data, isLoading, error } = useQuery<TableData[], ApiError>(
+    ['tableData', id],
+    () => getTableData(id!)
   );
 
   if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>An error occurred: {(error as Error).message}</div>;
-
+  if (error) return <div>An error occurred: {error.message}</div>;
+  
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4 text-gray-700 dark:text-white">Table View</h1>

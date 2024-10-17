@@ -1,7 +1,7 @@
 // src/components/Navbar.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import ThemeToggle from './ThemeToggle';
 
 const Navbar: React.FC = () => {

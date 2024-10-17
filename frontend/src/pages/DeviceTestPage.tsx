@@ -1,19 +1,26 @@
 // src/pages/DeviceTestPage.tsx
 import React, { useState } from 'react';
-import api from '../utils/api';
+import { useMutation } from 'react-query';
+import { testDeviceConnection } from '../utils/api';
+import { ApiError } from '../types/types';
 
 const DeviceTestPage: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
+
+  const mutation = useMutation<{ success: boolean; message: string }, ApiError, string>(testDeviceConnection, {
+    onSuccess: (data) => {
+      setResult(data.message);
+    },
+    onError: () => {
+      setResult('Connection failed');
+    },
+  });
+
   const [result, setResult] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await api.post('/devices/test-connection', { apiKey });
-      setResult(response.data.message);
-    } catch (error) {
-      setResult('Connection failed');
-    }
+    mutation.mutate(apiKey);
   };
 
   return (
