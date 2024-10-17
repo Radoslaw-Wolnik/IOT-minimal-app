@@ -1,9 +1,14 @@
-// src/controllers/authController.ts
 import { FastifyRequest, FastifyReply } from 'fastify';
 import bcrypt from 'bcrypt';
 import { User } from '../entities/User';
 import { Device } from '../entities/Device';
 import { generateApiKey } from '../utils/apiKey';
+import { QueryFailedError } from 'typeorm';
+
+// Custom type for database errors
+interface DatabaseError extends Error {
+  code?: string;
+}
 
 export class AuthController {
   async login(request: FastifyRequest<{ Body: { username: string; password: string } }>, reply: FastifyReply) {
@@ -28,11 +33,15 @@ export class AuthController {
       const token = request.server.jwt.sign({ id: user.id });
       reply.send({ token });
     } catch (error) {
-      if (error.code === '23505') { // unique_violation
-        reply.status(409).send({ error: 'Username already exists' });
-      } else {
-        throw error;
+      if (error instanceof QueryFailedError) {
+        const dbError = error as DatabaseError;
+        if (dbError.code === '23505') { // unique_violation
+          reply.status(409).send({ error: 'Username already exists' });
+          return;
+        }
       }
+      // If it's not a unique violation, re-throw the error
+      throw error;
     }
   }
 

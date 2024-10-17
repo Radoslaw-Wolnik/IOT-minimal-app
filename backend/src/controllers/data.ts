@@ -1,4 +1,3 @@
-// src/controllers/dataController.ts
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { Data } from '../entities/Data';
 import { Table } from '../entities/Table';
@@ -27,7 +26,7 @@ export class DataController {
     });
   }
 
-  async createData(request: FastifyRequest<{ Params: { tableId: string }; Body: object }>, reply: FastifyReply) {
+  async createData(request: FastifyRequest<{ Params: { tableId: string }; Body: Record<string, unknown> }>, reply: FastifyReply) {
     const { tableId } = request.params;
     const content = request.body;
 
@@ -42,8 +41,10 @@ export class DataController {
       return;
     }
 
-    const data = await request.server.db.getRepository(Data).save({ table, content });
-    reply.status(201).send(data);
+    const dataRepository = request.server.db.getRepository(Data);
+    const newData = dataRepository.create({ table, content });
+    const savedData = await dataRepository.save(newData);
+    reply.status(201).send(savedData);
   }
 
   async getBackup(request: FastifyRequest<{ Params: { tableId: string } }>, reply: FastifyReply) {
