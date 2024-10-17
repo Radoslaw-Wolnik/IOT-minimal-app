@@ -14,7 +14,9 @@ export const TableSchema = z.object({
   }),
 });
 
+// not sure witch one is better
 export const DataEntrySchema = z.record(z.string(), z.unknown());
+//export const DataEntrySchema = z.record(z.unknown());
 
 export const DeviceConnectionSchema = z.object({
   name: z.string().min(1).max(50),
