@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/app.js",
-    "dev": "tsx-dev --respawn --transpile-only src/app.ts",
+    "dev": "tsx src/app.ts",
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "test": "jest"
