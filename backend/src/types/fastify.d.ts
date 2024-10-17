@@ -1,18 +1,14 @@
-import { FastifyInstance as OriginalFastifyInstance } from 'fastify';
-import { DataSource } from 'typeorm';
+import { FastifyInstance as OriginalFastifyInstance } from 'fastify'
+import { DataSource } from 'typeorm'
+import { JwtPayload } from '@fastify/jwt'
 
 declare module 'fastify' {
   export interface FastifyInstance extends OriginalFastifyInstance {
-    // Authentication method
-    authenticate: () => Promise<void>;
-    
-    // TypeORM DataSource
-    db: DataSource;
-
-    // JWT helper methods
+    authenticate: () => Promise<void>
+    db: DataSource
     jwt: {
-      sign: (payload: object) => string;
-      verify: (token: string) => object;
-    };
+      sign: (payload: object) => string
+      verify: <T extends JwtPayload = JwtPayload>(token: string) => Promise<T>
+    }
   }
 }
