@@ -10,9 +10,9 @@ export class Data {
   @JoinColumn({ name: 'table_id' })
   table!: Table;
 
-  @Column('json')
+  @Column({ type: 'jsonb' })
   content!: object;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 }

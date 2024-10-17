@@ -20,7 +20,8 @@
     "dotenv": "^16.0.1",
     "fastify-typeorm": "^2.1.2",
     "pg": "^8.13.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
