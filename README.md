@@ -89,7 +89,7 @@ This guide provides detailed instructions for setting up the IoT Dashboard, incl
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/iot-dashboard.git
+   git clone https://github.com/radoslaw-wolnik/iot-dashboard.git
    cd iot-dashboard
    ```
 
