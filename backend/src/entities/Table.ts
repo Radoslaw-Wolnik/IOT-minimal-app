@@ -1,21 +1,20 @@
-// src/entities/Table.ts
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { JSONSchema7 } from 'json-schema';
 
 @Entity('tables')
 export class Table {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ unique: true })
-  name: string;
+  name!: string;
 
   @Column('jsonb')
-  schema: JSONSchema7;
+  schema!: JSONSchema7;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

@@ -1,18 +1,18 @@
-// src/entities/Data.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, JoinColumn } from 'typeorm';
 import { Table } from './Table';
 
 @Entity('data')
 export class Data {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
-  @ManyToOne(() => Table)
-  table: Table;
+  @ManyToOne(() => Table, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'table_id' })
+  table!: Table;
 
   @Column('json')
-  content: object;
+  content!: object;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }
