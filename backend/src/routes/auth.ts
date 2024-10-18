@@ -1,33 +1,53 @@
-import { FastifyPluginAsync } from 'fastify';
-import { LoginRequestSchema, UserSchema } from '../schemas';
+import { FastifyPluginAsync, FastifyInstance } from 'fastify';
 import { AuthController } from '../controllers/auth';
-import { FastifyInstance } from 'fastify';
 
 export const authRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   const authController = new AuthController();
 
-  // Login Route
-  const loginOpts = {
+  fastify.post('/login', {
     schema: {
-      body: LoginRequestSchema
-    }
-  };
-  fastify.post('/login', loginOpts, authController.login);
+      body: {
+        type: 'object',
+        required: ['username', 'password'],
+        properties: {
+          username: { type: 'string' },
+          password: { type: 'string' }
+        }
+      }
+    },
+    handler: authController.login
+  });
 
-  // Register Route
-  const registerOpts = {
+  fastify.post('/register', {
     schema: {
-      body: UserSchema
-    }
-  };
-  fastify.post('/register', registerOpts, authController.register);
+      body: {
+        type: 'object',
+        required: ['username', 'password'],
+        properties: {
+          username: { type: 'string' },
+          password: { type: 'string' }
+        }
+      }
+    },
+    handler: authController.register
+  });
 
-  // Refresh Device Token Route
   fastify.post('/refresh-device-token', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['apiKey'],
+        properties: {
+          apiKey: { type: 'string' }
+        }
+      }
+    },
     handler: authController.refreshDeviceToken
   });
 
-  fastify.post('/create-default-admin', authController.createDefaultAdmin.bind(authController));
+  fastify.post('/create-default-admin', {
+    handler: authController.createDefaultAdmin
+  });
 
   fastify.post('/change-admin-password', {
     schema: {
@@ -40,9 +60,10 @@ export const authRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) =
         }
       }
     },
-    handler: authController.changeAdminPassword.bind(authController)
+    handler: authController.changeAdminPassword
   });
 
-  fastify.get('/is-first-run', authController.isFirstRun.bind(authController));
+  fastify.get('/is-first-run', {
+    handler: authController.isFirstRun
+  });
 };
-

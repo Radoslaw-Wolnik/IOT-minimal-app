@@ -1,6 +1,4 @@
-// src/routes/tables.ts
 import { FastifyPluginAsync, FastifyInstance } from 'fastify';
-import { TableSchema } from '../schemas';
 import { TableController } from '../controllers/tables';
 import { JSONSchema7 } from 'json-schema';
 
@@ -9,32 +7,52 @@ export const tableRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) 
 
   fastify.get('/', {
     preHandler: [fastify.authenticate],
-    handler: tableController.getTables.bind(tableController)
+    handler: tableController.getTables
   });
 
   fastify.get<{ Params: { id: string } }>('/:id', {
     preHandler: [fastify.authenticate],
-    handler: tableController.getTable.bind(tableController)
+    handler: tableController.getTable
   });
 
   fastify.post<{ Body: { name: string; schema: JSONSchema7 } }>('/', {
     preHandler: [fastify.authenticate],
     schema: {
-      body: TableSchema,
+      body: {
+        type: 'object',
+        required: ['name', 'schema'],
+        properties: {
+          name: { type: 'string' },
+          schema: { 
+            type: 'object',
+            additionalProperties: true // This allows any valid JSON Schema
+          }
+        }
+      }
     },
-    handler: tableController.createTable.bind(tableController),
+    handler: tableController.createTable
   });
 
   fastify.put<{ Params: { id: string }; Body: { name: string; schema: JSONSchema7 } }>('/:id', {
     preHandler: [fastify.authenticate],
     schema: {
-      body: TableSchema,
+      body: {
+        type: 'object',
+        required: ['name', 'schema'],
+        properties: {
+          name: { type: 'string' },
+          schema: { 
+            type: 'object',
+            additionalProperties: true // This allows any valid JSON Schema
+          }
+        }
+      }
     },
-    handler: tableController.updateTable.bind(tableController),
+    handler: tableController.updateTable
   });
 
   fastify.delete<{ Params: { id: string } }>('/:id', {
     preHandler: [fastify.authenticate],
-    handler: tableController.deleteTable.bind(tableController)
+    handler: tableController.deleteTable
   });
 };
