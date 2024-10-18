@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import bcrypt from 'bcrypt';
+// import bcrypt from 'bcrypt';
+import bcryptjs from 'bcryptjs'
 import { User } from '../entities/User';
 import { AppSettings } from '../entities/AppSettings';
 import { Device } from '../entities/Device';
@@ -16,7 +17,7 @@ export class AuthController {
     const { username, password } = request.body;
     const user = await request.server.db.getRepository(User).findOne({ where: { username } });
 
-    if (!user || !await bcrypt.compare(password, user.passwordHash)) {
+    if (!user || !await bcryptjs.compare(password, user.passwordHash)) {
       reply.status(401).send({ error: 'Invalid credentials' });
       return;
     }
@@ -27,7 +28,7 @@ export class AuthController {
 
   async register(request: FastifyRequest<{ Body: { username: string; password: string } }>, reply: FastifyReply) {
     const { username, password } = request.body;
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcryptjs.hash(password, 10);
 
     try {
       const user = await request.server.db.getRepository(User).save({ username, passwordHash });
@@ -82,7 +83,7 @@ export class AuthController {
 
       const adminUser = new User();
       adminUser.username = 'admin';
-      adminUser.passwordHash = await bcrypt.hash(adminKey, 10);
+      adminUser.passwordHash = await bcryptjs.hash(adminKey, 10);
       await userRepo.save(adminUser);
 
       reply.send({ message: 'Default admin user created. Please change the password on first login.' });
@@ -108,13 +109,13 @@ export class AuthController {
       return;
     }
 
-    const isPasswordValid = await bcrypt.compare(currentPassword, adminUser.passwordHash);
+    const isPasswordValid = await bcryptjs.compare(currentPassword, adminUser.passwordHash);
     if (!isPasswordValid) {
       reply.status(401).send({ error: 'Invalid current password' });
       return;
     }
 
-    adminUser.passwordHash = await bcrypt.hash(newPassword, 10);
+    adminUser.passwordHash = await bcryptjs.hash(newPassword, 10);
     await userRepo.save(adminUser);
 
     if (appSettings.isFirstRun) {
