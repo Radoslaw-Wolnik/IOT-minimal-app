@@ -8,12 +8,8 @@ samll app for reciving IOT info and storing in custom db
  - `./dev.sh deploy`: Deploy the project using Docker Compose
 
 ## todo:
- - [ ] sepret routes and the other thing in backend
- - [ ] make hook for auth
  - [ ] make tests
- - [ ] check if docker is set properly
  - [ ] check the lets encrypt things
- - [ ] check if anything works
 
 # Deployment guide
 
