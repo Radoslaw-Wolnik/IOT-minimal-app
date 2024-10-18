@@ -3,12 +3,12 @@ import { DataEntrySchema, PaginationSchema } from '../schemas';
 import { DataController } from '../controllers/data';
 
 export const dataRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {
-  fastify.addHook('preHandler', fastify.authenticate);
   const dataController = new DataController();
 
   fastify.get<{ Params: { tableId: string }; Querystring: { page: number; limit: number } }>(
     '/:tableId',
     {
+      preHandler: [fastify.authenticate],
       schema: {
         querystring: PaginationSchema,
       },
@@ -20,6 +20,7 @@ export const dataRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) =
   fastify.post<{ Params: { tableId: string }; Body: Record<string, unknown> }>(
     '/:tableId',
     {
+      preHandler: [fastify.authenticate],
       schema: {
         body: DataEntrySchema,
       },
@@ -31,6 +32,7 @@ export const dataRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) =
   fastify.get<{ Params: { tableId: string } }>(
     '/:tableId/backup',
     {
+      preHandler: [fastify.authenticate],
       handler: (request: FastifyRequest<{ Params: { tableId: string } }>, reply: FastifyReply) =>
         dataController.getBackup(request, reply),
     }

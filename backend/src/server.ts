@@ -1,4 +1,4 @@
-import Fastify, { FastifyInstance } from 'fastify';
+import Fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { DataSource } from 'typeorm';
 import fastifyJwt from '@fastify/jwt';
 import fastifyCors from '@fastify/cors';
@@ -6,6 +6,12 @@ import { authRoutes } from './routes/auth';
 import { tableRoutes } from './routes/tables';
 import { dataRoutes } from './routes/data';
 import { deviceRoutes } from './routes/devices';
+
+declare module 'fastify' {
+  interface FastifyInstance {
+    authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+  }
+}
 
 export const createServer = async (): Promise<FastifyInstance> => {
   const server = Fastify({ logger: true });
@@ -21,9 +27,18 @@ export const createServer = async (): Promise<FastifyInstance> => {
   await dataSource.initialize();
   server.decorate('db', dataSource);
 
-  // Plugins
+  // JWT Plugin
   await server.register(fastifyJwt, {
-    secret: process.env.JWT_SECRET || 'your-secret-key',
+    secret: process.env.JWT_SECRET || 'your-secret-key'
+  });
+
+  // Authentication decorator
+  server.decorate('authenticate', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      await request.jwtVerify();
+    } catch (err) {
+      reply.send(err);
+    }
   });
 
   await server.register(fastifyCors, {
