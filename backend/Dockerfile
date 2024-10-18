@@ -13,6 +13,10 @@ COPY package*.json ./
 # RUN npm ci
 RUN npm install
 
+# Clear npm cache and install dependencies
+# RUN npm cache clean --force && \
+#    npm install
+
 # Rebuild bcrypt from source for the current platform (Linux)
 # RUN npm rebuild bcrypt --build-from-source
 
