@@ -1,14 +1,20 @@
-FROM node:18
+FROM node:18-alpine
 
-# with alpine some errors with bcrypt :(
+# Install dependencies required for native module compilation (like bcrypt)
 # RUN apk add --no-cache make gcc g++ python3
-# RUN npm rebuild bcrypt --build-from-source
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci
+# Remove node_modules to ensure fresh native builds
+# RUN rm -rf node_modules
+
+# RUN npm ci
+RUN npm install
+
+# Rebuild bcrypt from source for the current platform (Linux)
+# RUN npm rebuild bcrypt --build-from-source
 
 COPY . .
 
