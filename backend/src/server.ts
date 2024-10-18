@@ -1,4 +1,3 @@
-// src/server.ts
 import Fastify, { FastifyInstance } from 'fastify';
 import { DataSource } from 'typeorm';
 import fastifyJwt from '@fastify/jwt';
@@ -14,13 +13,9 @@ export const createServer = async (): Promise<FastifyInstance> => {
   // Database connection
   const dataSource = new DataSource({
     type: 'postgres',
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5432'),
-    username: process.env.DB_USERNAME || 'your_username',
-    password: process.env.DB_PASSWORD || 'your_password',
-    database: process.env.DB_NAME || 'your_database',
-    entities: ['src/entities/*.ts'],
-    synchronize: true, // Be careful with this in production
+    url: process.env.DATABASE_URL,
+    entities: ['dist/entities/*.js'], // Make sure this path is correct
+    synchronize: process.env.NODE_ENV !== 'production', // Disable in production
   });
 
   await dataSource.initialize();
@@ -37,10 +32,10 @@ export const createServer = async (): Promise<FastifyInstance> => {
   });
 
   // Routes
-  server.register(authRoutes, { prefix: '/api/auth' });
-  server.register(tableRoutes, { prefix: '/api/tables' });
-  server.register(dataRoutes, { prefix: '/api/data' });
-  server.register(deviceRoutes, { prefix: '/api/devices' });
+  await server.register(authRoutes, { prefix: '/api/auth' });
+  await server.register(tableRoutes, { prefix: '/api/tables' });
+  await server.register(dataRoutes, { prefix: '/api/data' });
+  await server.register(deviceRoutes, { prefix: '/api/devices' });
 
   // Error handler
   server.setErrorHandler((error, request, reply) => {

@@ -6,7 +6,8 @@ const start = async () => {
   try {
     const server: FastifyInstance = await createServer();
     
-    await server.listen({ port: 3000, host: '0.0.0.0' });
+    const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+    await server.listen({ port, host: '0.0.0.0' });
     
     const address = server.server.address();
     if (address && typeof address === 'object') {

@@ -1,6 +1,4 @@
-# docker-compose.yml
 version: '3.8'
-
 services:
   frontend:
     build: ./frontend
@@ -16,12 +14,15 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://user:password@db:5432/iot_dashboard
-      - JWT_SECRET=your_jwt_secret
+      - JWT_SECRET=${JWT_SECRET:-your_jwt_secret}
       - NODE_ENV=production
       - ADMIN_KEY=${ADMIN_KEY:-m1y2p3a4s5s6w7o8r9d}
+      - CORS_ORIGIN=http://localhost:80
+      - PORT=3000
 
   db:
     image: postgres:13
@@ -31,6 +32,11 @@ services:
       - POSTGRES_DB=iot_dashboard
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d iot_dashboard"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pgdata:
