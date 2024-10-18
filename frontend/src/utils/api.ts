@@ -72,4 +72,13 @@ export const testDeviceConnection = async (apiKey: string): Promise<{ success: b
 export const refreshDeviceToken = async (apiKey: string): Promise<{ apiKey: string }> => 
   (await api.post<{ apiKey: string }>('/auth/refresh-device-token', { apiKey })).data;
 
+export const createDefaultAdmin = async (): Promise<void> =>
+  (await api.post('/auth/create-default-admin')).data;
+
+export const changeAdminPassword = async (currentPassword: string, newPassword: string): Promise<void> =>
+  (await api.post('/auth/change-admin-password', { currentPassword, newPassword })).data;
+
+export const isFirstRun = async (): Promise<{ isFirstRun: boolean }> =>
+  (await api.get('/auth/is-first-run')).data;
+
 export default api;

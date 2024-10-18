@@ -26,4 +26,23 @@ export const authRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) =
   fastify.post('/refresh-device-token', {
     handler: authController.refreshDeviceToken
   });
+
+  fastify.post('/create-default-admin', authController.createDefaultAdmin.bind(authController));
+
+  fastify.post('/change-admin-password', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['currentPassword', 'newPassword'],
+        properties: {
+          currentPassword: { type: 'string' },
+          newPassword: { type: 'string' }
+        }
+      }
+    },
+    handler: authController.changeAdminPassword.bind(authController)
+  });
+
+  fastify.get('/is-first-run', authController.isFirstRun.bind(authController));
 };
+
