@@ -21,6 +21,7 @@ services:
       - DATABASE_URL=postgresql://user:password@db:5432/iot_dashboard
       - JWT_SECRET=your_jwt_secret
       - NODE_ENV=production
+      - ADMIN_KEY=${ADMIN_KEY:-m1y2p3a4s5s6w7o8r9d}
 
   db:
     image: postgres:13
