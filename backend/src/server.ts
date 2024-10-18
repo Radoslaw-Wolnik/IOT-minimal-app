@@ -1,5 +1,5 @@
 // src/server.ts
-import fastify, { FastifyInstance } from 'fastify';
+import Fastify, { FastifyInstance } from 'fastify';
 import { DataSource } from 'typeorm';
 import fastifyJwt from '@fastify/jwt';
 import fastifyCors from '@fastify/cors';
@@ -9,7 +9,7 @@ import { dataRoutes } from './routes/data';
 import { deviceRoutes } from './routes/devices';
 
 export const createServer = async (): Promise<FastifyInstance> => {
-  const server = fastify({ logger: true });
+  const server = Fastify({ logger: true });
 
   // Database connection
   const dataSource = new DataSource({
